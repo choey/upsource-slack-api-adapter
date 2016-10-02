@@ -27,6 +27,8 @@ module.exports = {
 		var reviewRequest = axios.post(reviewDetailsUrl, reviewIdDTO).then(function(response) {
 			var review = response.data.result;
 			var slackRequest = adapter(request, review, config);
+			slackRequest.username = 'Upsource Bot';
+			slackRequest.icon_emoji = ':squirrel:';
 			console.log('=== start slack webhook payload ===');
 			console.log(JSON.stringify(slackRequest, false, 4));
 			console.log('=== end slack webhook payload ===');
