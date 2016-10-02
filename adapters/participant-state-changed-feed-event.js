@@ -1,10 +1,12 @@
 const _ = require('lodash');
+const adapterHelper = require('./adapter-helper');
 
 module.exports = function(review) {
-	const reviewers = _.chain(review).get('data.base.userIds', []).map('userName').value().join(', ');
+        const author = _.get(request, 'data.base.actor.userName', '');
+        const reviewers = adapterHelper.getReviewers(request);
 	const reviewState  = {
-		0: '_Open_',
-		1: '_Closed_'
+		0: 'Open',
+		1: 'Closed'
 	};
 
 	const color = (function() {
@@ -14,19 +16,27 @@ module.exports = function(review) {
 	});
 
 	return {
-		text: `Review #${review.data.base.reviewNumber}: Participant state changed from ${reviewState[review.data.oldState]} to ${reviewState[review.data.newState]}`,
+		text: `Review #${request.data.base.requestNumber}: Participant state changed from ${requestState[request.data.oldState]} to ${requestState[request.data.newState]}`,
 		attachments: [
 			{
-				fallback: `Review #${review.data.base.reviewNumber}: Participant state changed from ${reviewState[review.data.oldState]} to ${reviewState[review.data.newState]}`,
+                                title: `[${request.data.base.reviewId}] ${review.title}`,
+                                title_link: `http://${config.upsourceUrl}/${review.projectId}/review/${request.data.base.reviewId}`,
+                                author_name: author,
+				fallback: `Review #${request.data.base.reviewNumber}: Participant state changed from ${reviewState[request.data.oldState]} to ${reviewState[request.data.newState]}`,
 				fields: [
-					{
-						title: 'Project',
-						value: review.projectId,
-						short: true
-					},
+                                        {
+                                                title: 'Old State',
+                                                value: `_${reviewState[request.data.oldState]}_`,
+                                                short: true
+                                        },
+                                        {
+                                                title: 'New State',
+                                                value: `_${reviewState[request.data.newState]}_`,
+                                                short: true
+                                        },
 					{
 						title: 'Reviewer(s)',
-						value: reviewers,
+						value: reviewers.join(', '),
 						short: true
 					}
 				],

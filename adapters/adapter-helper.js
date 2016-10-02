@@ -11,6 +11,17 @@ module.exports = function() {
 			if (actor && reviewers.indexOf(actor) == -1)
 				reviewers.push(actor);
 			return reviewers;
+		},
+		getRevisions: function(request) {
+			var revisions = request.data.revisions;
+			if (revisions === undefined || revisions.length == 0)
+				return [];
+			else
+				return revisions;
+		},
+		sanitizeForSlack: function(text) {
+			// at-mentioning results in @{userId,userName}, so translate this as @userName
+			return text.replace(/@\{[^,]+,([^\}]+)}/g, '@$1');
 		}
 	}
 }();

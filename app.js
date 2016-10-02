@@ -15,13 +15,16 @@ module.exports = {
 			console.log(`No adapter has been registered for the event ${request.dataType}`);
 			return;
 		}
+
+		var reviewIdDTO = {
+			projectId: request.projectId,
+			reviewId: request.data.base.reviewId
+		}
 		
 		// fetch review details, because the webhook request does not have review title
 		// note: we want the review title, not the revision commit description
-		var reviewRequest = axios.post(config.upsourceUrl + '/~rpc/getReviewDetails', {
-			projectId: request.projectId,
-			reviewId: request.data.base.reviewId
-		}).then(function(response) {
+		var reviewDetailsUrl = config.upsourceUrl + '/~rpc/getReviewDetails'
+		var reviewRequest = axios.post(reviewDetailsUrl, reviewIdDTO).then(function(response) {
 			var review = response.data.result;
 			var slackRequest = adapter(request, review, config);
 			console.log('=== start slack webhook payload ===');

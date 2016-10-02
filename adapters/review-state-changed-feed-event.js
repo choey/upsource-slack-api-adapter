@@ -2,7 +2,7 @@ const _ = require('lodash');
 const adapterHelper = require('./adapter-helper');
 
 module.exports = function(request, review, config) {
-	const author = _.get(request, 'data.base.actor.userName', '');
+	const author = adapterHelper.getActor(request);
         const reviewers = adapterHelper.getReviewers(request);
 	const reviewState  = {
 		0: 'Open',
@@ -21,7 +21,7 @@ module.exports = function(request, review, config) {
 			{
                                 title: `[${request.data.base.reviewId}] ${review.title}`,
                                 title_link: `http://${config.upsourceUrl}/${review.projectId}/review/${request.data.base.reviewId}`,
-                                author_name: author,
+                                author_name: `Review State Changed by ${author}`,
 				fallback: `[${request.data.base.reviewId}] Review state changed from ${reviewState[request.data.oldState]} to ${reviewState[request.data.newState]}`,
 				fields: [
 					{

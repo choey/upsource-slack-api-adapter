@@ -1,7 +1,8 @@
 const _ = require('lodash');
+const adapterHelper = require('./adapter-helper');
 
 module.exports = function(review) {
-	const reviewers = _.chain(review).get('data.base.userIds', []).map('userName').value().join(', ');
+	const reviewers = adapterHelper.getReviewers(request);
 
 	return {
 		text: `Review #${review.data.base.reviewNumber}: Participants changed`,
@@ -16,7 +17,7 @@ module.exports = function(review) {
 					},
 					{
 						title: 'Reviewer(s)',
-						value: reviewers,
+						value: reviewers.join(', '),
 						short: true
 					}
 				],
