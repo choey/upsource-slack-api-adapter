@@ -23,17 +23,29 @@ module.exports = {
 		
 		// fetch review details, because the webhook request does not have review title
 		// note: we want the review title, not the revision commit description
-		var reviewDetailsUrl = config.upsourceUrl + '/~rpc/getReviewDetails'
-		var reviewRequest = axios.post(reviewDetailsUrl, reviewIdDTO).then(function(response) {
-			var review = response.data.result;
-			var slackRequest = adapter(request, review, config);
-			slackRequest.username = 'Upsource Bot';
-			slackRequest.icon_emoji = ':squirrel:';
-			console.log('=== start slack webhook payload ===');
-			console.log(JSON.stringify(slackRequest, false, 4));
-			console.log('=== end slack webhook payload ===');
-			axios.post(config.slackWebhookUrl, slackRequest);
-		});
+		var reviewDetailsUrl = config.upsourceUrl + '/~rpc/getReviewDetails';
+		var getReviewDetails = axios.post(reviewDetailsUrl, reviewIdDTO);
+
+		var userInfoUrl = config.upsourceUrl + '/~rpc/getUserInfo';
+		var getUserInfo = axios.post(userInfoUrl, {ids: Adapters.helper.getActor(request).userId });
+
+		axios.all([getReviewDetails, getUserInfo])
+			.then(axios.spread(function(reviewResponse, userInfoResponse) {
+				var review = reviewResponse.data.result;
+				var userInfo = userInfoResponse.data.result.infos[0]
+				var slackRequest = adapter(request, review, userInfo, config);
+				
+				Adapters.helper.fetchAvatarLink(userInfo, function(avatar) {
+					slackRequest.username = 'Upsource Bot';
+					slackRequest.icon_emoji = ':squirrel:';
+					slackRequest.attachments[0].footer = userInfo.name;
+					slackRequest.attachments[0].footer_icon = avatar;
+					console.log('=== start slack webhook payload ===');
+					console.log(JSON.stringify(slackRequest, false, 4));
+					console.log('=== end slack webhook payload ===');
+					axios.post(config.slackWebhookUrl, slackRequest);
+				});
+			}));
 	}
 };
 

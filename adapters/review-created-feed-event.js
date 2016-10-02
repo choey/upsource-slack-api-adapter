@@ -11,8 +11,7 @@ module.exports = function(request, review, config) {
                         {
                                 title: `[${request.data.base.reviewId}] ${review.title}`,
                                 title_link: adapterHelper.getReviewUrl(request),
-                                author_name: `Review Created by ${author}`,
-                                fallback: `New Review [${request.data.base.reviewId}] raised by ${author}`,
+                                fallback: `New Review`,
                                 fields: [
                                         {
                                                 title: 'Revisions',

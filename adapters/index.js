@@ -3,5 +3,6 @@ module.exports = {
 	'ReviewStateChangedFeedEventBean': require('./review-state-changed-feed-event'),
 //	'ParticipantStateChangedFeedEventBean': require('./participant-state-changed-feed-event'),
 	'NewParticipantInReviewFeedEventBean': require('./new-participant-in-review-feed-event'),
-	'DiscussionFeedEventBean': require('./discussion-feed-event')
+	'DiscussionFeedEventBean': require('./discussion-feed-event'),
+	'helper': require('./adapter-helper')
 };

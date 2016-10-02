@@ -21,7 +21,7 @@ module.exports = function(review) {
 			{
                                 title: `[${request.data.base.reviewId}] ${review.title}`,
                                 title_link: adapterHelper.getReviewUrl(request),
-                                author_name: author,
+                                author_name: 'Participant State Changed',
 				fallback: `Review #${request.data.base.reviewNumber}: Participant state changed from ${reviewState[request.data.oldState]} to ${reviewState[request.data.newState]}`,
 				fields: [
                                         {
