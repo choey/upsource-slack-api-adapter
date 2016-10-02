@@ -1,35 +1,46 @@
 const _ = require('lodash');
+const adapterHelper = require('./adapter-helper');
 
-module.exports = function(review) {
-	const reviewers = _.chain(review).get('data.base.userIds', []).map('userName').value().join(', ');
+module.exports = function(request, review, config) {
+	const author = _.get(request, 'data.base.actor.userName', '');
+        const reviewers = adapterHelper.getReviewers(request);
 	const reviewState  = {
-		0: '_Open_',
-		1: '_Closed_'
+		0: 'Open',
+		1: 'Closed'
 	};
 
 	const color = (function() {
-		if (review.data.newState === 0) return '#F35A00';
+		if (request.data.newState === 0) return '#F35A00';
 
 		return '#2AB27B'
 	});
 
 	return {
-		text: `Review #${review.data.base.reviewNumber}: Review state changed from ${reviewState[review.data.oldState]} to ${reviewState[review.data.newState]}`,
+		mrkdown: true,
 		attachments: [
 			{
-				fallback: `Review #${review.data.base.reviewNumber}: Review state changed from ${reviewState[review.data.oldState]} to ${reviewState[review.data.newState]}`,
+                                title: `[${request.data.base.reviewId}] ${review.title}`,
+                                title_link: `http://${config.upsourceUrl}/${review.projectId}/review/${request.data.base.reviewId}`,
+                                author_name: author,
+				fallback: `[${request.data.base.reviewId}] Review state changed from ${reviewState[request.data.oldState]} to ${reviewState[request.data.newState]}`,
 				fields: [
 					{
-						title: 'Project',
-						value: review.projectId,
+						title: 'Old State',
+						value: `_${reviewState[request.data.oldState]}_`,
 						short: true
 					},
 					{
-						title: 'Changed by',
-						value: review.data.base.actor.userName,
+						title: 'New State',
+						value: `_${reviewState[request.data.newState]}_`,
 						short: true
-					}
+					},
+                                        {
+                                                title: 'Reviewer(s)',
+                                                value: reviewers.join(', '),
+                                                short: true
+                                        }
 				],
+				mrkdwn_in: ['fields'],
 				color: color()
 			}
 		]

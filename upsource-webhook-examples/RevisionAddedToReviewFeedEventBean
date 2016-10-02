@@ -1,0 +1,29 @@
+{
+    "majorVersion": 3,
+    "minorVersion": 0,
+    "projectId": "live-manifest",
+    "dataType": "RevisionAddedToReviewFeedEventBean",
+    "data": {
+        "base": {
+            "userIds": [
+                {
+                    "userId": "e6ef6603-a224-44c8-8d55-7bff95caa421",
+                    "userName": "george.lester",
+                    "userEmail": "george.lester@theplatform.com"
+                }
+            ],
+            "reviewNumber": 2,
+            "reviewId": "LM-CR-2",
+            "date": 1475371006018,
+            "actor": {
+                "userId": "85646e4d-5f99-4ca7-816b-61573d0fe7c3",
+                "userName": "Cho",
+                "userEmail": "sukhyun.cho@theplatform.com"
+            },
+            "feedEventId": "1475371006018#live-manifest#d972a97c-4b3e-4d4e-990e-1a473a3c7fa4"
+        },
+        "revisionIds": [
+            "472108"
+        ]
+    }
+}

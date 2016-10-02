@@ -3,6 +3,7 @@ var server = express();
 var bodyParser = require('body-parser');
 var util = require('util');
 var app = require('./app');
+const config = require(`./config.json`);
 
 server.use(bodyParser.json());
 
@@ -11,7 +12,7 @@ server.post('/', function (req, res) {
   res.end();
 });
 
-server.listen(4000, function() {
-  console.log('The app has started and is running on :4000');
+var port = config.listenPort;
+server.listen(port, function() {
+  console.log(`The app has started and is running on :${port}`);
 });
-

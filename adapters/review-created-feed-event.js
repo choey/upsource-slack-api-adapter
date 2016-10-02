@@ -1,25 +1,27 @@
 const _ = require('lodash');
 
-module.exports = function(review) {
-	const reviewers = _.chain(review).get('data.base.userIds', []).map('userName').value().join(', ');
+module.exports = function(request, review, config) {
+        const reviewers = request.data.base.userIds.map(function(user) { return user.userName }).join(', ');
+	const author = _.get(request, 'data.base.actor.userName', '');
 
-	return {
-		text: `Review #${review.data.base.reviewNumber}: Raised by *${_.get(review, 'data.base.actor.userName', '')}*`,
-		attachments: [
-			{
-				fallback: `Review #${review.data.base.reviewNumber}: Raised by *${_.get(review, 'data.base.actor.userName', '')}*`,
-				fields: [
-					{
-						title: 'Project',
-						value: review.projectId,
-						short: true
-					},
-					{
-						title: 'Reviewer(s)',
-						value: reviewers,
-						short: true
-					}
-				],
+        return {
+                attachments: [
+                        {
+                                title: `[${request.data.base.reviewId}] ${review.title}`,
+                                title_link: `http://${config.upsourceUrl}/${review.projectId}/review/${request.data.base.reviewId}`,
+                                author_name: author,
+                                fallback: `New Review [${request.data.base.reviewId}] raised by ${author}`,
+                                fields: [
+                                        {
+                                                title: 'Comment',
+                                                value: request.data.commentText
+                                        },
+                                        {
+                                                title: 'Reviewer(s)',
+                                                value: reviewers,
+                                                short: true
+                                        }
+                                ],
 				color: '#F35A00'
 			}
 		]
