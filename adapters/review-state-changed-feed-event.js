@@ -20,7 +20,7 @@ module.exports = function(request, review, config) {
 		attachments: [
 			{
                                 title: `[${request.data.base.reviewId}] ${review.title}`,
-                                title_link: `http://${config.upsourceUrl}/${review.projectId}/review/${request.data.base.reviewId}`,
+                                title_link: adapterHelper.getReviewUrl(request),
                                 author_name: `Review State Changed by ${author}`,
 				fallback: `[${request.data.base.reviewId}] Review state changed from ${reviewState[request.data.oldState]} to ${reviewState[request.data.newState]}`,
 				fields: [

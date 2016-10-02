@@ -1,4 +1,6 @@
 const _ = require('lodash');
+const config = require('../config');
+const adapterHelper = require('./adapter-helper');
 
 module.exports = function() {
 	return {
@@ -16,8 +18,10 @@ module.exports = function() {
 			var revisions = request.data.revisions;
 			if (revisions === undefined || revisions.length == 0)
 				return [];
-			else
-				return revisions;
+			return revisions;
+		},
+		getReviewUrl: function(request) {
+			return `${config.upsourceUrl}/${request.projectId}/review/${request.data.base.reviewId}`;
 		},
 		sanitizeForSlack: function(text) {
 			// at-mentioning results in @{userId,userName}, so translate this as @userName
