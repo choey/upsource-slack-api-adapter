@@ -1,46 +1,56 @@
 const _ = require('lodash');
 const adapterHelper = require('./adapter-helper');
 
-module.exports = function(review) {
-        const author = _.get(request, 'data.base.actor.userName', '');
+module.exports = function(request, review, userInfo, config) {
+	const author = adapterHelper.getActor(request);
         const reviewers = adapterHelper.getReviewers(request);
 	const reviewState  = {
-		0: 'Open',
-		1: 'Closed'
+		0: 'N/A',		// probably an impossible value
+		1: 'In Review',
+		2: 'Accepted',
+		3: 'Issue Raised'
 	};
 
 	const color = (function() {
-		if (review.data.newState === 0) return '#F35A00';
+		if (request.data.newState == 0 || request.data.newState == 3) return '#F35A00';
 
 		return '#2AB27B'
 	});
 
+	const message = (function(state) {
+		if (state == 2)
+			return 'Ship It!';
+		return reviewState[state];
+	});
+
 	return {
-		text: `Review #${request.data.base.requestNumber}: Participant state changed from ${requestState[request.data.oldState]} to ${requestState[request.data.newState]}`,
+		mrkdown: true,
 		attachments: [
 			{
                                 title: `[${request.data.base.reviewId}] ${review.title}`,
                                 title_link: adapterHelper.getReviewUrl(request),
-                                author_name: 'Participant State Changed',
-				fallback: `Review #${request.data.base.reviewNumber}: Participant state changed from ${reviewState[request.data.oldState]} to ${reviewState[request.data.newState]}`,
+                                author_name: message(request.data.newState),
+				fallback: `[${request.data.base.reviewId}] Participant state changed from ${reviewState[request.data.oldState]} to ${reviewState[request.data.newState]}`,
+				// TODO: post a random ship pic instead of old/new states
 				fields: [
-                                        {
-                                                title: 'Old State',
-                                                value: `_${reviewState[request.data.oldState]}_`,
-                                                short: true
-                                        },
-                                        {
-                                                title: 'New State',
-                                                value: `_${reviewState[request.data.newState]}_`,
-                                                short: true
-                                        },
 					{
-						title: 'Reviewer(s)',
-						value: reviewers.join(', '),
+						title: 'Old State',
+						value: `_${reviewState[request.data.oldState]}_`,
 						short: true
-					}
+					},
+					{
+						title: 'New State',
+						value: `_${reviewState[request.data.newState]}_`,
+						short: true
+					},
+                                        {
+                                                title: 'Reviewer(s)',
+                                                value: reviewers.join(', '),
+                                                short: true
+                                        }
 				],
-				color: '#2AB27B'
+				mrkdwn_in: ['fields'],
+				color: color()
 			}
 		]
 	}
