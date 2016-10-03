@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const adapterHelper = require('./adapter-helper');
 
-module.exports = function(review) {
+module.exports = function (review) {
 	const reviewers = adapterHelper.getReviewers(request);
 
 	return {
