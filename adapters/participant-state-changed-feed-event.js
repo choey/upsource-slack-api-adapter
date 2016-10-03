@@ -12,16 +12,22 @@ module.exports = function(request, review, userInfo, config) {
 	};
 
 	const color = (function() {
-		if (request.data.newState == 0 || request.data.newState == 3) return '#F35A00';
-
-		return '#2AB27B'
+		var goodStates = [1, 2];
+		var isBadState = goodStates.indexOf(request.data.newState) == -1;
+		return isBadState ? '#F35A00' : '#2AB27B'; 
 	});
 
-	const message = (function(state) {
-		if (state == 2)
+	const message = (function(oldState, newState) {
+		if (newState == 'Accepted')
+		{
 			return 'Ship It!';
-		return reviewState[state];
+		}
+
+		return newState;
 	});
+
+	var oldState = reviewState[request.data.oldState];
+	var newState = reviewState[request.data.newState];
 
 	return {
 		mrkdown: true,
@@ -29,18 +35,18 @@ module.exports = function(request, review, userInfo, config) {
 			{
                                 title: `[${request.data.base.reviewId}] ${review.title}`,
                                 title_link: adapterHelper.getReviewUrl(request),
-                                author_name: message(request.data.newState),
+                                author_name: message(oldState, newState),
 				fallback: `[${request.data.base.reviewId}] Participant state changed from ${reviewState[request.data.oldState]} to ${reviewState[request.data.newState]}`,
 				// TODO: post a random ship pic instead of old/new states
 				fields: [
 					{
 						title: 'Old State',
-						value: `_${reviewState[request.data.oldState]}_`,
+						value: `_${oldState}_`,
 						short: true
 					},
 					{
 						title: 'New State',
-						value: `_${reviewState[request.data.newState]}_`,
+						value: `_${newState}_`,
 						short: true
 					},
                                         {
