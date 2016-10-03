@@ -27,6 +27,7 @@ module.exports = function(request, review, userInfo, config) {
 						short: true
 					}
 				],
+				mrkdwn_in: ['fields'],
 				color: '#3AA3E3'
 			}
 		]

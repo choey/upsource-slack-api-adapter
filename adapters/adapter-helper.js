@@ -2,7 +2,7 @@ const _ = require('lodash');
 const axios = require(`axios`);
 const config = require('../config');
 
-module.exports = function() {
+module.exports = (function() {
 	return {
 		getActor: function(request) {
 			/* 
@@ -35,27 +35,25 @@ module.exports = function() {
 			// at-mentioning results in @{userId,userName}, so translate this as @userName
 			return text.replace(/@\{[^,]+,([^\}]+)}/g, '@$1');
 		},
-		resolveHttpRedirects: function(url, callback, maxnum) {
-			maxnum = maxnum || 3;
-			var count = 0;
-			var next = function(url) {
-				axios.head(url, function(response) {
-					console.log(response);
-				})
-			}
-			next(url);
-		},
-		fetchAvatarLink: function(userInfo, callback) {
-			axios.request({
+		fetchAvatarLink: function(userInfo) {			
+			var avatarRequest = axios.request({
 				url: userInfo.avatarUrl,
 				method: 'head',
-				transformResponse: [function(data) { return null }]
-			}).then(function(response) {
-				var link = response.headers.link;
-				if (link && link.charAt(0) == '<')
-					link = link.substr(1, link.indexOf('>') - 1);
-				callback(link);
+				transformResponse: [function(data) { return null }],
 			});
+
+			return {
+				then: function(callback) {
+					return avatarRequest.then(function(response) {
+						var link = response.headers.link;
+						if (link && link.charAt(0) == '<')
+							link = link.substr(1, link.indexOf('>') - 1);
+
+						console.log(`Found avatar link: ${link}`);
+						return callback(link);
+					});
+				}
+			}			
 		}
 	}
-}();
+})();

@@ -1,5 +1,7 @@
 {
         "listenPort": 4000,
-        "upsourceUrl": "link-to-upsource',
-        "slackWebhookUrl": "link-to-slack-webhook"
+        "upsourceUrl": "link-to-upsource",
+        "slackWebhookUrl": "link-to-slack-webhook",
+        "botName": "Upsource Bot",
+	"botAvatar": ":squirrel:"
 }

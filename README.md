@@ -16,8 +16,10 @@ The Upsource base url and Slack webhook endpoint need to be provided in config.j
 ```
 {
 	"listenPort": 4000,
-	"upsourceUrl": "link-to-upsource',
-	"slackWebhookUrl": "link-to-slack-webhook"
+	"upsourceUrl": "link-to-upsource",
+	"slackWebhookUrl": "link-to-slack-webhook",
+	"botName": "Upsource Bot",
+	"botAvatar": ":squirrel:"
 }
 ```
 Save this file in the root directory of the project.
